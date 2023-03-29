@@ -1,0 +1,58 @@
+﻿@model IEnumerable<ConsumeWebApi.Models.JokeModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <br />
+    <div class="table">
+        <div id="nextJoke" class="btn btn-primary">What Next Jokes?</div>
+        <input type="number" id="search" value="1" min="1" max="5" />        
+    </div>
+    <br />     
+    <div class="table" id="jokesPanel">
+        @foreach (var item in Model)
+        {
+            <div class="card">
+                @*<div>@item._id</div>*@
+                <div class="card-title">@item.type</div>
+                <div>@item.setup</div>
+                <div>@item.punchline</div>
+            </div>
+        }
+    </div>
+    <br />
+
+</div>
+@section Scripts{
+    <script>
+        $("#nextJoke").click(function() {
+            const settings = {
+	        "async": true,
+	        "crossDomain": true,
+	        "url": "https://dad-jokes.p.rapidapi.com/random/joke?"+$.param({ count: $("#search").val() }),
+	        "method": "GET",
+	        "headers": {
+		        "X-RapidAPI-Key": "1211a6cfc0msh4dca38f6f625161p1fd9bfjsn97f21995c1c7",
+		        "X-RapidAPI-Host": "dad-jokes.p.rapidapi.com"
+	        }
+            };
+
+            $.ajax(settings).done(function (response) {	      
+                var $jokesPanel = $("#jokesPanel");
+                $jokesPanel.html("");    
+                $.each(response.body,function ( index, repo ) {                     
+                    $jokesPanel.append("<div class='card'>");
+                    //$jokesPanel.append(`<div>${repo._id}</div>`);
+                    $jokesPanel.append(`<div class="card-title">${repo.type}</div>`);
+                    $jokesPanel.append(`<div>${repo.setup}</div>`);
+                    $jokesPanel.append(`<div>${repo.punchline}</div>`);
+                   $jokesPanel.append("</div>");
+                });           
+            });
+        });
+
+    </script>
+
+}
